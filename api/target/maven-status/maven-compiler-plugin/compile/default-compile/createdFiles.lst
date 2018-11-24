@@ -1,0 +1,5 @@
+com/smendoza/bloggy/svc/model/AuditModel.class
+com/smendoza/bloggy/BloggyApplication.class
+com/smendoza/bloggy/svc/model/BlogPost.class
+com/smendoza/bloggy/svc/repository/BlogPostRepository.class
+com/smendoza/bloggy/ws/BlogPostController.class
