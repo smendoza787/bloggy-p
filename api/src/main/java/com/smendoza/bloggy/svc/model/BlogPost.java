@@ -1,30 +1,31 @@
 package com.smendoza.bloggy.svc.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "posts")
-public class BlogPost extends AuditModel {
+@Table(name = "blog_posts")
+public class BlogPost {
 
     @Id
-    @GeneratedValue
-    private Long id;
-
-    @NotBlank
+    private String id;
     private String title;
-
-    @NotBlank
     private String content;
 
-    public Long getId() {
+    protected BlogPost() {}
+
+    public BlogPost(String id, String title, String content) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -42,5 +43,14 @@ public class BlogPost extends AuditModel {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "BlogPost{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                '}';
     }
 }

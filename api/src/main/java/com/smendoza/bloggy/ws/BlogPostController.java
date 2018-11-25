@@ -1,49 +1,45 @@
 package com.smendoza.bloggy.ws;
 
+import com.smendoza.bloggy.svc.BlogPostService;
 import com.smendoza.bloggy.svc.model.BlogPost;
-import com.smendoza.bloggy.svc.repository.BlogPostRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.Valid;
-import java.util.MissingResourceException;
+import javax.inject.Inject;
 
 @RestController
 public class BlogPostController {
 
-    @Autowired
-    private BlogPostRepository blogPostRepository;
+    private static Logger log = LoggerFactory.getLogger(BlogPostController.class);
 
-    @GetMapping("/posts")
-    public Page<BlogPost> getBlogPosts(Pageable pageable) {
-        return blogPostRepository.findAll(pageable);
+    private final BlogPostService service;
+
+    @Inject
+    public BlogPostController(BlogPostService service) {
+        this.service = service;
     }
 
-    @PostMapping("/posts")
-    public BlogPost createBlogPost(@Valid @RequestBody BlogPost blogPost) {
-        return blogPostRepository.save(blogPost);
+    @RequestMapping(value = "/posts", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public BlogPostDto postBlogPost(@RequestBody BlogPostDto entity) {
+
+        log.info("CONTROLLER: Creating Blog Post with title: {}", entity.title);
+
+        BlogPost result = service.createBlogPost(entity.toBlogPost());
+
+        return BlogPostDto.fromBlogPost(result);
     }
 
-    @PutMapping("/posts/{blogPostId}")
-    public BlogPost updateBlogPost(@PathVariable Long blogPostId, @Valid @RequestBody BlogPost blogPostRequest) {
-        return blogPostRepository.findById(blogPostId)
-                .map(blogPost -> {
-                    blogPost.setTitle(blogPostRequest.getTitle());
-                    blogPost.setContent(blogPostRequest.getContent());
-                    return blogPostRepository.save(blogPost);
-                }).orElseThrow(() -> new EntityNotFoundException("Blog Post with id: " + blogPostId));
-    }
+    @RequestMapping(value = "/posts/{blogPostId}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public BlogPostDto getBlogPost(@PathVariable String blogPostId) {
 
-    @DeleteMapping("/posts/{blogPostId}")
-    public ResponseEntity<?> deleteBlogPost(@PathVariable Long blogPostId) {
-        return blogPostRepository.findById(blogPostId)
-                .map(blogPost -> {
-                    blogPostRepository.delete(blogPost);
-                    return ResponseEntity.ok().build();
-                }).orElseThrow(() -> new EntityNotFoundException("Blog Post with id: " + blogPostId));
+        log.info("CONTROLLER: Getting Blog Post with id: {}", blogPostId);
+
+        BlogPost result = service.getBlogPostById(blogPostId);
+
+        return BlogPostDto.fromBlogPost(result);
     }
 }
