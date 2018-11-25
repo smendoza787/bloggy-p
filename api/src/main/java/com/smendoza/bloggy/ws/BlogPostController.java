@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 @RestController
@@ -59,5 +60,20 @@ public class BlogPostController {
         BlogPost result = service.updateBlogPost(entity.toBlogPost());
 
         return BlogPostDto.fromBlogPost(result);
+    }
+
+    @RequestMapping(value = "/posts/{blogPostId}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public String deleteBlogPost(@PathVariable String blogPostId) {
+
+        log.info("CONTROLLER: DELETE Blog Post with id: {}", blogPostId);
+
+        Boolean result = service.deleteBlogPostById(blogPostId);
+
+        if (result) {
+            return "Blog Post with id: {" + blogPostId + "} was successfully deleted.";
+        }
+
+        throw new EntityNotFoundException("Error deleting Blog Post with id: " + blogPostId);
     }
 }

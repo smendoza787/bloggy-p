@@ -53,4 +53,13 @@ public class BlogPostService {
             throw new EntityNotFoundException("Blog Post with id: " + entity.getId() + " was not found.");
         }
     }
+
+    public Boolean deleteBlogPostById(String blogPostId) {
+
+        log.info("SERVICE: Deleting Blog Post with id: {}", blogPostId);
+
+        repository.deleteById(blogPostId);
+
+        return true;
+    }
 }
