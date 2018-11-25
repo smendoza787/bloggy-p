@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 @RestController
 public class BlogPostController {
@@ -23,7 +24,7 @@ public class BlogPostController {
 
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public BlogPostDto postBlogPost(@RequestBody BlogPostDto entity) {
+    public BlogPostDto postBlogPost(@Valid @RequestBody BlogPostDto entity) {
 
         log.info("CONTROLLER: Creating Blog Post with title: {}", entity.title);
 
