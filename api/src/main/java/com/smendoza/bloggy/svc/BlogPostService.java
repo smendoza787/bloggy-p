@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,5 +39,18 @@ public class BlogPostService {
 
         return repository.findById(blogPostId)
                 .orElseThrow(() -> new EntityNotFoundException("Blog Post with id: " + blogPostId));
+    }
+
+    public BlogPost updateBlogPost(BlogPost entity) {
+
+        log.info("SERVICE: Updating Blog Post with id: {}", entity.getId());
+
+        Optional<BlogPost> oldBlogPost = repository.findById(entity.getId());
+
+        if (oldBlogPost.isPresent()) {
+            return repository.save(entity);
+        } else {
+            throw new EntityNotFoundException("Blog Post with id: " + entity.getId() + " was not found.");
+        }
     }
 }
