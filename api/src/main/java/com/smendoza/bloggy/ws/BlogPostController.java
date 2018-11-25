@@ -26,7 +26,7 @@ public class BlogPostController {
     @ResponseStatus(HttpStatus.CREATED)
     public BlogPostDto postBlogPost(@Valid @RequestBody BlogPostDto entity) {
 
-        log.info("CONTROLLER: Creating Blog Post with title: {}", entity.title);
+        log.info("CONTROLLER: POST Blog Post with title: {}", entity.title);
 
         BlogPost result = service.createBlogPost(entity.toBlogPost());
 
@@ -37,9 +37,26 @@ public class BlogPostController {
     @ResponseStatus(HttpStatus.OK)
     public BlogPostDto getBlogPost(@PathVariable String blogPostId) {
 
-        log.info("CONTROLLER: Getting Blog Post with id: {}", blogPostId);
+        log.info("CONTROLLER: GET Blog Post with id: {}", blogPostId);
 
         BlogPost result = service.getBlogPostById(blogPostId);
+
+        return BlogPostDto.fromBlogPost(result);
+    }
+
+    @RequestMapping(value = "/posts/{blogPostId}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public BlogPostDto putBlogPost(@PathVariable String blogPostId, @Valid @RequestBody BlogPostDto entity) {
+
+        log.info("CONTROLLER: PUT Blog Post with id: {}", blogPostId);
+
+        if (entity.id != null && entity.id != blogPostId) {
+            throw new RuntimeException("PathVariable blogPostId and entity.id do not match");
+        }
+
+        entity.id = blogPostId;
+
+        BlogPost result = service.updateBlogPost(entity.toBlogPost());
 
         return BlogPostDto.fromBlogPost(result);
     }
