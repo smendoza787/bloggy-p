@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,5 +63,16 @@ public class BlogPostService {
         repository.deleteById(blogPostId);
 
         return true;
+    }
+
+    public List<BlogPost> getAllBlogPosts() {
+
+        log.info("SERVICE: Getting all blog posts");
+
+        List<BlogPost> blogPostList = new ArrayList<>();
+
+        repository.findAll().forEach(blogPostList::add);
+
+        return blogPostList;
     }
 }

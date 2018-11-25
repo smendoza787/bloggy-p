@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class BlogPostController {
@@ -32,6 +34,20 @@ public class BlogPostController {
         BlogPost result = service.createBlogPost(entity.toBlogPost());
 
         return BlogPostDto.fromBlogPost(result);
+    }
+
+    @RequestMapping(value = "/posts", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public List<BlogPostDto> getBlogPosts() {
+
+        log.info("CONTROLLER: GET all Blog Posts");
+
+        List<BlogPost> result = service.getAllBlogPosts();
+
+        return result
+                .stream()
+                .map(BlogPostDto::fromBlogPost)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/posts/{blogPostId}", method = RequestMethod.GET)
